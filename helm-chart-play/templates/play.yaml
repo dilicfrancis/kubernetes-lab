@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webapp
+spec:
+  selector:
+    matchLabels:
+      app: webapp
+  replicas: {{ .Values.numberOfWebAppReplicas }} #Go Actions
+  template: # template for the pods
+    metadata:
+      labels:
+        app: webapp
+    spec:
+      containers:
+        - name: webapp
+          # Note to deployer - add -dev at the end of here for development version
+          image: {{ upper .Values.repoName }}/k8s-fleetman-helm-demo:v1.0.0 #function param1 param2 paramN
+          #image: {{ .Values.repoName | default "richardchesterwood" | upper }}/k8s-fleetman-helm-demo:v1.0.0 #function param1 param2 paramN
+          #image: {{ default "richardchesterwood" .Values.repoName }}/k8s-fleetman-helm-demo:v1.0.0 #function param1 param2 paramN
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: fleetman-webapp
+
+spec:
+  selector:
+    app: webapp
+
+  ports:
+    - name: http
+      port: 80
+      nodePort: 30080
+
+  type: NodePort

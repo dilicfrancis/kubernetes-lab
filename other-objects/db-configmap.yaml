@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: global-db-config
+  namespace: default
+data:
+  #key: default
+  db.url: "http://db.com:4390"
+  db.password: "secure@pass34"

@@ -1,0 +1,105 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: queue-mq
+spec:
+  selector:
+    matchLabels:
+      app: queue-mq
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: queue-mq
+    spec:
+      containers:
+        - name: queue-app
+          image: richardchesterwood/k8s-fleetman-queue:release2
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: position-sim
+spec:
+  selector:
+    matchLabels:
+      app: position-sim
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: position-sim
+    spec:
+      containers:
+        - name: position-simulator
+          image: richardchesterwood/k8s-fleetman-position-simulator:release2
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: production-microservice
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: position-track
+spec:
+  selector:
+    matchLabels:
+      app: position-track
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: position-track
+    spec:
+      containers:
+        - name: position-track
+          image: richardchesterwood/k8s-fleetman-position-tracker:release3
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: production-microservice
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-gate
+spec:
+  selector:
+    matchLabels:
+      app: api-gate
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: api-gate
+    spec:
+      containers:
+        - name: api-gate
+          image: richardchesterwood/k8s-fleetman-api-gateway:release2
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: production-microservice
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+spec:
+  selector:
+    matchLabels:
+      app: frontend
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+        - name: frontend
+          image: richardchesterwood/k8s-fleetman-webapp-angular:release2
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: production-microservice
